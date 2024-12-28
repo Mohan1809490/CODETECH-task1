@@ -1,0 +1,74 @@
+import re
+
+def calculate_password_strength(password):
+    """
+    Assess the strength of a password based on length, complexity, and uniqueness.
+
+    Parameters:
+    password (str): The password to analyze.
+
+    Returns:
+    dict: A dictionary containing the score and feedback.
+    """
+    strength_score = 0
+    feedback = []
+
+    # Check length
+    if len(password) < 8:
+        feedback.append("Password is too short. Aim for at least 8 characters.")
+    elif len(password) < 12:
+        strength_score += 1
+        feedback.append("Consider using a longer password for better security.")
+    else:
+        strength_score += 2
+        feedback.append("Password length is adequate.")
+
+    # Check for complexity: lowercase, uppercase, digits, special characters
+    if re.search(r'[a-z]', password):
+        strength_score += 1
+    else:
+        feedback.append("Add lowercase letters to increase password strength.")
+
+    if re.search(r'[A-Z]', password):
+        strength_score += 1
+    else:
+        feedback.append("Add uppercase letters to increase password strength.")
+
+    if re.search(r'\d', password):
+        strength_score += 1
+    else:
+        feedback.append("Add numbers to increase password strength.")
+
+    if re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+        strength_score += 1
+    else:
+        feedback.append("Add special characters to increase password strength.")
+
+    # Check for uniqueness (repeated characters)
+    unique_chars = len(set(password))
+    if unique_chars < len(password) * 0.7:
+        feedback.append("Avoid too many repeated characters for better uniqueness.")
+    else:
+        strength_score += 1
+
+    # Provide overall feedback
+    if strength_score <= 3:
+        feedback.append("Overall strength is weak. Consider improving your password.")
+    elif strength_score <= 5:
+        feedback.append("Overall strength is moderate. Consider additional improvements.")
+    else:
+        feedback.append("Your password is strong.")
+
+    return {
+        "score": strength_score,
+        "feedback": feedback
+    }
+
+# Example usage
+if __name__ == "__main__":
+    password = input("Enter your password: ")
+    result = calculate_password_strength(password)
+    print(f"Password Strength Score: {result['score']}/7")
+    print("Feedback:")
+    for comment in result['feedback']:
+        print(f"- {comment}")
